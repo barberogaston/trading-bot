@@ -33,7 +33,7 @@ def train_model(agent, episode, data, ep_count=100, batch_size=32,
 
         # BUY
         if action == 1:
-            agent.inventory.append(data.iloc[t].loc[:, 'close'])
+            agent.inventory.append(data.iloc[t].loc['close'])
 
         # SELL
         elif action == 2 and len(agent.inventory) > 0:
