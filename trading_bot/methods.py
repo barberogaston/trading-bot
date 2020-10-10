@@ -95,9 +95,8 @@ def evaluate_model(agent, data, window_size, debug):
             history.append((data.iloc[t].loc['close'], "SELL"))
             if debug:
                 logging.debug("Sell at: {} | Position: {}".format(
-                    format_currency(
-                        data[t]), format_position(
-                            data.iloc[t].loc['close'] - bought_price)))
+                    format_currency(data.iloc[t].loc['close']),
+                    format_position(data.iloc[t].loc['close'] - bought_price)))
         # HOLD
         else:
             history.append((data.iloc[t].loc['close'], "HOLD"))
