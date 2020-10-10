@@ -21,14 +21,16 @@ def huber_loss(y_true, y_pred, clip_delta=1.0):
     error = y_true - y_pred
     cond = K.abs(error) <= clip_delta
     squared_loss = 0.5 * K.square(error)
-    quadratic_loss = 0.5 * K.square(clip_delta) + clip_delta * (K.abs(error) - clip_delta)
+    quadratic_loss = (
+        0.5 * K.square(clip_delta) + clip_delta * (K.abs(error) - clip_delta))
     return K.mean(tf.where(cond, squared_loss, quadratic_loss))
 
 
 class Agent:
     """ Stock Trading Bot """
 
-    def __init__(self, state_size, strategy="t-dqn", reset_every=1000, pretrained=False, model_name=None):
+    def __init__(self, state_size, strategy="t-dqn", reset_every=1000,
+                 pretrained=False, model_name=None):
         self.strategy = strategy
 
         # agent config
@@ -41,13 +43,15 @@ class Agent:
 
         # model config
         self.model_name = model_name
-        self.gamma = 0.95 # affinity for long term reward
+        self.gamma = 0.95  # affinity for long term reward
         self.epsilon = 1.0
         self.epsilon_min = 0.01
         self.epsilon_decay = 0.995
         self.learning_rate = 0.001
         self.loss = huber_loss
-        self.custom_objects = {"huber_loss": huber_loss}  # important for loading the model from memory
+
+        #  important for loading the model from memory
+        self.custom_objects = {"huber_loss": huber_loss}
         self.optimizer = Adam(lr=self.learning_rate)
 
         if pretrained and self.model_name is not None:
@@ -68,7 +72,8 @@ class Agent:
         """Creates the model
         """
         model = Sequential()
-        model.add(Dense(units=128, activation="relu", input_dim=self.state_size))
+        model.add(Dense(units=128, activation="relu",
+                        input_dim=self.state_size))
         model.add(Dense(units=256, activation="relu"))
         model.add(Dense(units=256, activation="relu"))
         model.add(Dense(units=128, activation="relu"))
@@ -91,7 +96,7 @@ class Agent:
 
         if self.first_iter:
             self.first_iter = False
-            return 1 # make a definite buy on the first iter
+            return 1 #  make a definite buy on the first iter
 
         action_probs = self.model.predict(state)
         return np.argmax(action_probs[0])
@@ -101,7 +106,7 @@ class Agent:
         """
         mini_batch = random.sample(self.memory, batch_size)
         X_train, y_train = [], []
-        
+
         # DQN
         if self.strategy == "dqn":
             for state, action, reward, next_state, done in mini_batch:
@@ -109,11 +114,15 @@ class Agent:
                     target = reward
                 else:
                     # approximate deep q-learning equation
-                    target = reward + self.gamma * np.amax(self.model.predict(next_state)[0])
+                    target = (
+                        reward +
+                        self.gamma *
+                        np.amax(self.model.predict(next_state)[0]))
 
                 # estimate q-values based on current state
                 q_values = self.model.predict(state)
-                # update the target for current action based on discounted reward
+                # update the target for current action based on discounted
+                # reward
                 q_values[0][action] = target
 
                 X_train.append(state[0])
@@ -130,11 +139,15 @@ class Agent:
                     target = reward
                 else:
                     # approximate deep q-learning equation with fixed targets
-                    target = reward + self.gamma * np.amax(self.target_model.predict(next_state)[0])
+                    target = (
+                        reward +
+                        self.gamma *
+                        np.amax(self.target_model.predict(next_state)[0]))
 
                 # estimate q-values based on current state
                 q_values = self.model.predict(state)
-                # update the target for current action based on discounted reward
+                # update the target for current action based on discounted
+                # reward
                 q_values[0][action] = target
 
                 X_train.append(state[0])
@@ -151,16 +164,21 @@ class Agent:
                     target = reward
                 else:
                     # approximate double deep q-learning equation
-                    target = reward + self.gamma * self.target_model.predict(next_state)[0][np.argmax(self.model.predict(next_state)[0])]
+                    target = (
+                        reward +
+                        self.gamma *
+                        self.target_model.predict(next_state)[0][
+                            np.argmax(self.model.predict(next_state)[0])])
 
                 # estimate q-values based on current state
                 q_values = self.model.predict(state)
-                # update the target for current action based on discounted reward
+                # update the target for current action based on discounted
+                # reward
                 q_values[0][action] = target
 
                 X_train.append(state[0])
                 y_train.append(q_values[0])
-                
+
         else:
             raise NotImplementedError()
 
@@ -181,4 +199,5 @@ class Agent:
         self.model.save("models/{}_{}".format(self.model_name, episode))
 
     def load(self):
-        return load_model("models/" + self.model_name, custom_objects=self.custom_objects)
+        return load_model("models/" + self.model_name,
+                          custom_objects=self.custom_objects)
