@@ -62,8 +62,9 @@ def main(train_stock, val_stock, window_size, batch_size, ep_count,
 
     train_data = get_stock_data(train_stock)
     val_data = get_stock_data(val_stock)
+    val_close = val_data.loc[:, 'close'].tolist()
 
-    initial_offset = val_data[1] - val_data[0]
+    initial_offset = val_close[1] - val_close[0]
 
     for episode in range(1, ep_count + 1):
         train_result = train_model(agent, episode, train_data,

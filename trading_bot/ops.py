@@ -13,15 +13,18 @@ def sigmoid(x):
         print("Error in sigmoid: " + err)
 
 
-def get_state(data, t, n_days):
+def get_state(complete_data, current_time, n_days):
     """Returns an n-day state representation ending at time t."""
-    d = t - n_days + 1
-    block = (
-        data[d: t + 1]
-        if d >= 0
-        else -d * [data[0]] + data[0: t + 1]  # pad with t0
-    )
+    time_from = current_time - n_days + 1
     res = []
-    for i in range(n_days - 1):
-        res.append(sigmoid(block[i + 1] - block[i]))
+
+    for col in complete_data.columns:
+        data = complete_data.loc[:, col].tolist()
+        block = (
+            data[time_from: current_time + 1]
+            if time_from >= 0
+            else -time_from * [data[0]] + data[0: current_time + 1]
+        )
+        for i in range(n_days - 1):
+            res.append(sigmoid(block[i + 1] - block[i]))
     return np.array([res])

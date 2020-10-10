@@ -44,7 +44,9 @@ def show_eval_result(model_name, profit, initial_offset):
 def get_stock_data(stock_file):
     """Reads stock data from csv file."""
     df = pd.read_csv(stock_file)
-    return list(df['Adj Close'])
+    columns = ['close', 'rsi', 'ema', 'sma', 'macd', 'macd_signal',
+               'macd_diff']
+    return df.loc[:, columns]
 
 
 def switch_k_backend_device():

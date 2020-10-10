@@ -16,7 +16,7 @@ from .ops import (
 def train_model(agent, episode, data, ep_count=100, batch_size=32,
                 window_size=10):
     total_profit = 0
-    data_length = len(data) - 1
+    data_length = data.shape[0] - 1
 
     agent.inventory = []
     avg_loss = []
@@ -33,12 +33,12 @@ def train_model(agent, episode, data, ep_count=100, batch_size=32,
 
         # BUY
         if action == 1:
-            agent.inventory.append(data[t])
+            agent.inventory.append(data.iloc[t].loc[:, 'close'])
 
         # SELL
         elif action == 2 and len(agent.inventory) > 0:
             bought_price = agent.inventory.pop(0)
-            delta = data[t] - bought_price
+            delta = data.iloc[t].loc['close'] - bought_price
             reward = delta  # max(delta, 0)
             total_profit += delta
 
@@ -63,7 +63,7 @@ def train_model(agent, episode, data, ep_count=100, batch_size=32,
 
 def evaluate_model(agent, data, window_size, debug):
     total_profit = 0
-    data_length = len(data) - 1
+    data_length = data.shape[0] - 1
 
     history = []
     agent.inventory = []
@@ -79,27 +79,29 @@ def evaluate_model(agent, data, window_size, debug):
 
         # BUY
         if action == 1:
-            agent.inventory.append(data[t])
+            agent.inventory.append(data.iloc[t].loc['close'])
 
-            history.append((data[t], "BUY"))
+            history.append((data.iloc[t].loc['close'], "BUY"))
             if debug:
-                logging.debug("Buy at: {}".format(format_currency(data[t])))
+                logging.debug("Buy at: {}".format(
+                    format_currency(data.iloc[t].loc['close'])))
 
         # SELL
         elif action == 2 and len(agent.inventory) > 0:
             bought_price = agent.inventory.pop(0)
-            delta = data[t] - bought_price
+            delta = data.iloc[t].loc['close'] - bought_price
             reward = delta  # max(delta, 0)
             total_profit += delta
 
-            history.append((data[t], "SELL"))
+            history.append((data.iloc[t].loc['close'], "SELL"))
             if debug:
                 logging.debug("Sell at: {} | Position: {}".format(
                     format_currency(
-                        data[t]), format_position(data[t] - bought_price)))
+                        data[t]), format_position(
+                            data.iloc[t].loc['close'] - bought_price)))
         # HOLD
         else:
-            history.append((data[t], "HOLD"))
+            history.append((data.iloc[t].loc['close'], "HOLD"))
 
         done = (t == data_length - 1)
         agent.memory.append((state, action, reward, next_state, done))
