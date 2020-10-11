@@ -57,13 +57,15 @@ def main(train_stock, val_stock, window_size, batch_size, ep_count,
     Args: [python train.py --help]
 
     """
-    agent = Agent(window_size, strategy=strategy, pretrained=pretrained,
-                  model_name=model_name)
-
     train_data = get_stock_data(train_stock)
     val_data = get_stock_data(val_stock)
+    val_close = val_data.loc[:, 'close'].tolist()
 
-    initial_offset = val_data[1] - val_data[0]
+    agent = Agent(window_size * train_data.shape[1], strategy=strategy,
+                  pretrained=pretrained, model_name=model_name)
+
+
+    initial_offset = val_close[1] - val_close[0]
 
     for episode in range(1, ep_count + 1):
         train_result = train_model(agent, episode, train_data,
