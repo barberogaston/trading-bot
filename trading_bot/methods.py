@@ -32,15 +32,20 @@ def train_model(agent, episode, data, ep_count=100, batch_size=32,
         action = agent.act(state)
 
         # BUY
-        if action == 1:
+        if action == 1 and len(agent.inventory) == 0:
             agent.inventory.append(data.iloc[t].loc['close'])
 
         # SELL
-        elif action == 2 and len(agent.inventory) > 0:
-            bought_price = agent.inventory.pop(0)
-            delta = data.iloc[t].loc['close'] - bought_price
-            reward = delta  # max(delta, 0)
-            total_profit += delta
+        elif (
+            action == 2 and len(agent.inventory) > 0 and
+            agent.inventory[0] < data.iloc[t].loc['close']
+        ):
+            reward = 0
+            for item in agent.inventory:
+              delta = data.iloc[t].loc['close'] - item
+              reward += delta  # max(delta, 0)
+            total_profit += reward
+            agent.inventory = []
 
         # HOLD
         else:
@@ -77,7 +82,7 @@ def evaluate_model(agent, data, window_size, debug):
         action = agent.act(state, is_eval=True)
 
         # BUY
-        if action == 1:
+        if action == 1 and len(agent.inventory) == 0:
             agent.inventory.append(data.iloc[t].loc['close'])
 
             history.append((data.iloc[t].loc['close'], "BUY"))
@@ -86,17 +91,22 @@ def evaluate_model(agent, data, window_size, debug):
                     format_currency(data.iloc[t].loc['close'])))
 
         # SELL
-        elif action == 2 and len(agent.inventory) > 0:
-            bought_price = agent.inventory.pop(0)
-            delta = data.iloc[t].loc['close'] - bought_price
-            reward = delta  # max(delta, 0)
-            total_profit += delta
+        elif (
+            action == 2 and len(agent.inventory) > 0
+            and agent.inventory[0] < data.iloc[t].loc['close']
+        ):
+            reward = 0
+            for item in agent.inventory:
+              delta = data.iloc[t].loc['close'] - item
+              if debug:
+                  logging.debug("Sell at: {} | Position: {}".format(
+                      format_currency(data.iloc[t].loc['close']),
+                      format_position(data.iloc[t].loc['close'] - item)))
+              reward += delta  # max(delta, 0)
+            total_profit += reward
+            agent.inventory = []
 
             history.append((data.iloc[t].loc['close'], "SELL"))
-            if debug:
-                logging.debug("Sell at: {} | Position: {}".format(
-                    format_currency(data.iloc[t].loc['close']),
-                    format_position(data.iloc[t].loc['close'] - bought_price)))
         # HOLD
         else:
             history.append((data.iloc[t].loc['close'], "HOLD"))
