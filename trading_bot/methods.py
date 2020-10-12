@@ -4,11 +4,11 @@ import numpy as np
 
 from tqdm import tqdm
 
-from .utils import (
+from trading_bot.utils import (
     format_currency,
     format_position
 )
-from .ops import (
+from trading_bot.ops import (
     get_state
 )
 
