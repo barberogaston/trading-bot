@@ -59,7 +59,6 @@ def main(train_stock, val_stock, window_size, batch_size, ep_count,
     """
     train_data = get_stock_data(train_stock)
     val_data = get_stock_data(val_stock)
-    val_close = val_data.loc[:, 'close'].tolist()
 
     agent = Agent(window_size * train_data.shape[1], strategy=strategy,
                   pretrained=pretrained, model_name=model_name)

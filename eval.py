@@ -38,7 +38,6 @@ def main(eval_stock, window_size, model_name, debug):
     Args: [python eval.py --help]
     """
     data = get_stock_data(eval_stock)
-    data_close = data.loc[:, 'close'].tolist()
 
     # Single Model Evaluation
     if model_name is not None:
