@@ -7,6 +7,5 @@ long_description = (here / 'README.md').read_text(encoding='utf-8')
 setup(
     name='trading_bot',
     version='0.0.1',
-    packages=find_packages(where='.'),
-    install_requires=['pandas', 'keras', 'tensorflow']
+    packages=find_packages(where='.')
 )

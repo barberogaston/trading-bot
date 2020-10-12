@@ -11,4 +11,5 @@ seaborn
 ipython
 pycoingecko
 ta
+click
 -e .
