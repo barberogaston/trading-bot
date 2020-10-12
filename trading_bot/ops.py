@@ -17,8 +17,10 @@ def get_state(complete_data, current_time, n_days):
     """Returns an n-day state representation ending at time t."""
     time_from = current_time - n_days + 1
     res = []
+    feature_columns = ['close', 'rsi', 'ema', 'sma', 'macd', 'macd_signal',
+                       'macd_diff', 'volume', 'chaikin', 'mfi', 'obv']
 
-    for col in complete_data.columns:
+    for col in feature_columns:
         data = complete_data.loc[:, col].tolist()
         block = (
             data[time_from: current_time + 1]
