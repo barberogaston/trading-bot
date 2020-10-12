@@ -11,6 +11,8 @@ from keras.models import load_model, clone_model
 from keras.layers import Dense
 from keras.optimizers import Adam
 
+from trading_bot.models import get_models_folder_path
+
 
 def huber_loss(y_true, y_pred, clip_delta=1.0):
     """Huber loss - Custom Loss Function for Q Learning
@@ -37,6 +39,7 @@ class Agent:
         self.state_size = state_size    	# normalized previous days
         self.action_size = 3           		# [sit, buy, sell]
         self.model_name = model_name
+        self.models_path = get_models_folder_path()
         self.inventory = []
         self.memory = deque(maxlen=10000)
         self.first_iter = True
@@ -196,8 +199,8 @@ class Agent:
         return loss
 
     def save(self, episode):
-        self.model.save("models/{}_{}".format(self.model_name, episode))
+        self.model.save(f'{self.models_path}/{self.model_name}_{episode}')
 
     def load(self):
-        return load_model("models/" + self.model_name,
+        return load_model(f'{self.models_path}/{self.model_name}',
                           custom_objects=self.custom_objects)
