@@ -42,6 +42,7 @@ from docopt import docopt
 from trading_bot.agent import Agent
 from trading_bot.methods import train_model, evaluate_model
 from trading_bot.utils import (
+    filter_data_by_feature_columns,
     get_stock_data,
     show_train_result,
     switch_k_backend_device
@@ -57,8 +58,8 @@ def main(train_stock, val_stock, window_size, batch_size, ep_count,
     Args: [python train.py --help]
 
     """
-    train_data = get_stock_data(train_stock)
-    val_data = get_stock_data(val_stock)
+    train_data = filter_data_by_feature_columns(get_stock_data(train_stock))
+    val_data = filter_data_by_feature_columns(get_stock_data(val_stock))
 
     agent = Agent(window_size * train_data.shape[1], strategy=strategy,
                   pretrained=pretrained, model_name=model_name)

@@ -1,6 +1,8 @@
 import pandas as pd
 from ta.momentum import RSIIndicator
 from ta.trend import EMAIndicator, MACD, SMAIndicator
+from ta.volume import (ChaikinMoneyFlowIndicator, MFIIndicator,
+                       OnBalanceVolumeIndicator)
 
 
 def add_indicators(data: pd.DataFrame) -> pd.DataFrame:
@@ -22,6 +24,11 @@ def add_indicators(data: pd.DataFrame) -> pd.DataFrame:
     ema = EMAIndicator(data['close'])
     sma = SMAIndicator(data['close'], n=14)
     macd = MACD(data['close'])
+    chaikin = ChaikinMoneyFlowIndicator(data['high'], data['low'],
+                                        data['close'], data['volume'])
+    mfi = MFIIndicator(data['high'], data['low'], data['close'],
+                       data['volume'])
+    obv = OnBalanceVolumeIndicator(data['close'], data['volume'])
 
     data.loc[:, 'rsi'] = rsi.rsi()
     data.loc[:, 'ema'] = ema.ema_indicator()
@@ -29,5 +36,8 @@ def add_indicators(data: pd.DataFrame) -> pd.DataFrame:
     data.loc[:, 'macd'] = macd.macd()
     data.loc[:, 'macd_diff'] = macd.macd_diff()
     data.loc[:, 'macd_signal'] = macd.macd_signal()
+    data.loc[:, 'chaikin'] = chaikin.chaikin_money_flow()
+    data.loc[:, 'mfi'] = mfi.money_flow_index()
+    data.loc[:, 'obv'] = obv.on_balance_volume()
 
     return data

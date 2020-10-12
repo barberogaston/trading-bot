@@ -34,10 +34,7 @@ def show_eval_result(model_name, profit):
 
 def get_stock_data(stock_file):
     """Reads stock data from csv file."""
-    df = pd.read_csv(stock_file)
-    columns = ['close', 'rsi', 'ema', 'sma', 'macd', 'macd_signal',
-               'macd_diff']
-    return df.loc[:, columns]
+    return pd.read_csv(stock_file)
 
 
 def switch_k_backend_device():
@@ -48,3 +45,9 @@ def switch_k_backend_device():
     if K.backend() == "tensorflow":
         logging.debug("switching to TensorFlow for CPU")
         os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+
+
+def filter_data_by_feature_columns(data):
+    feature_columns = ['close', 'rsi', 'ema', 'sma', 'macd', 'macd_signal',
+                       'macd_diff', 'volume', 'chaikin', 'mfi', 'obv']
+    return data.loc[:, feature_columns]

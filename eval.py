@@ -25,6 +25,7 @@ from docopt import docopt
 from trading_bot.agent import Agent
 from trading_bot.methods import evaluate_model
 from trading_bot.utils import (
+    filter_data_by_feature_columns,
     get_stock_data,
     show_eval_result,
     switch_k_backend_device
@@ -37,7 +38,7 @@ def main(eval_stock, window_size, model_name, debug):
 
     Args: [python eval.py --help]
     """
-    data = get_stock_data(eval_stock)
+    data = filter_data_by_feature_columns(get_stock_data(eval_stock))
 
     # Single Model Evaluation
     if model_name is not None:

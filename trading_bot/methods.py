@@ -30,6 +30,7 @@ def train_model(agent, episode, data, ep_count=100, batch_size=32,
 
         # select an action
         action = agent.act(state)
+        close = data.iloc[t].loc['close']
 
         # BUY
         if action == 1 and len(agent.inventory) == 0:
@@ -42,8 +43,8 @@ def train_model(agent, episode, data, ep_count=100, batch_size=32,
         ):
             reward = 0
             for item in agent.inventory:
-              delta = close - item
-              reward += delta  # max(delta, 0)
+                delta = close - item
+                reward += delta  # max(delta, 0)
             total_profit += reward
             agent.inventory = []
 
