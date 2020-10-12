@@ -43,8 +43,13 @@ def main(eval_stock, window_size, model_name, debug):
     if model_name is not None:
         agent = Agent(window_size * data.shape[1], pretrained=True,
                       model_name=model_name)
-        profit, _ = evaluate_model(agent, data, window_size, debug)
+        profit, history = evaluate_model(agent, data, window_size, debug)
         show_eval_result(model_name, profit)
+
+        with open('eval_log.csv', 'w+') as f:
+            f.write('Close,Action\n')
+            for row in history:
+                f.write(f'{row[0]},{row[1]}\n')
 
     # Multiple Model Evaluation
     else:
