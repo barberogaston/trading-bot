@@ -1,7 +1,5 @@
 from ta.momentum import RSIIndicator
 from ta.trend import EMAIndicator, MACD, SMAIndicator
-from ta.volatility import BollingerBands
-from ta.volume import MFIIndicator
 
 
 def add_indicators(data):
