@@ -39,14 +39,13 @@ def main(eval_stock, window_size, model_name, debug):
     """
     data = get_stock_data(eval_stock)
     data_close = data.loc[:, 'close'].tolist()
-    initial_offset = data_close[1] - data_close[0]
 
     # Single Model Evaluation
     if model_name is not None:
         agent = Agent(window_size * data.shape[1], pretrained=True,
                       model_name=model_name)
         profit, _ = evaluate_model(agent, data, window_size, debug)
-        show_eval_result(model_name, profit, initial_offset)
+        show_eval_result(model_name, profit)
 
     # Multiple Model Evaluation
     else:
@@ -55,7 +54,7 @@ def main(eval_stock, window_size, model_name, debug):
                 agent = Agent(window_size * data.shape[1], pretrained=True,
                               model_name=model)
                 profit = evaluate_model(agent, data, window_size, debug)
-                show_eval_result(model, profit, initial_offset)
+                show_eval_result(model, profit)
                 del agent
 
 
