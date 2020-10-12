@@ -97,12 +97,12 @@ def evaluate_model(agent, data, window_size, debug):
         ):
             reward = 0
             for item in agent.inventory:
-              delta = data.iloc[t].loc['close'] - item
-              if debug:
-                  logging.debug("Sell at: {} | Position: {}".format(
-                      format_currency(data.iloc[t].loc['close']),
-                      format_position(data.iloc[t].loc['close'] - item)))
-              reward += delta  # max(delta, 0)
+                delta = data.iloc[t].loc['close'] - item
+                if debug:
+                    logging.debug("Sell at: {} | Position: {}".format(
+                        format_currency(data.iloc[t].loc['close']),
+                        format_position(data.iloc[t].loc['close'] - item)))
+                reward += delta  # max(delta, 0)
             total_profit += reward
             agent.inventory = []
 

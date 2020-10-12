@@ -24,7 +24,7 @@ def show_train_result(result, val_position):
                  .format(result[0], result[1], format_position(result[2]),
                          format_position(val_position), result[3]))
     with open('train_result.csv', 'a+') as f:
-        f.write(f'{result[0]},{result[1]},{result[2]},{result[3]}')
+        f.write(f'{result[0]},{result[1]},{result[2]},{result[3]}\n')
 
 
 def show_eval_result(model_name, profit):
