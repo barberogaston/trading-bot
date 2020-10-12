@@ -30,7 +30,7 @@ here = os.path.abspath(os.path.dirname(__file__))
 coin = 'bitcoin'
 params = {'convert': 'USD',
           'time_end': str(int(datetime.now().timestamp())),  # Now
-          'time_start': '1367020800',
+          'time_start': '1367020800',  # April 27, 2013
           'slug': coin}
 
 # Make API call
