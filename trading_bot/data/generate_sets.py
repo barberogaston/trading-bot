@@ -1,10 +1,14 @@
+import os
+
 import pandas as pd
 
 from trading_bot.indicators import add_indicators
 
+# This folder
+here = os.path.abspath(os.path.dirname(__file__))
 
 # Read data
-bitcoin = pd.read_csv('bitcoin.csv', parse_dates=['date'])
+bitcoin = pd.read_csv(f'{here}/bitcoin.csv', parse_dates=['date'])
 
 # Calculate indicators
 bitcoin = add_indicators(bitcoin)
@@ -24,9 +28,9 @@ train = bitcoin.iloc[:train_size]
 valid = bitcoin.iloc[train_size:]
 
 # Export
-test.to_csv('test.csv', index=False)
-train.to_csv('train.csv', index=False)
-valid.to_csv('valid.csv', index=False)
+test.to_csv(f'{here}/test.csv', index=False)
+train.to_csv(f'{here}/train.csv', index=False)
+valid.to_csv(f'{here}/valid.csv', index=False)
 
 # Print sizes
 print(f'Train size: {train.shape[0]}')
