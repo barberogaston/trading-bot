@@ -33,16 +33,16 @@ def train_model(agent, episode, data, ep_count=100, batch_size=32,
 
         # BUY
         if action == 1 and len(agent.inventory) == 0:
-            agent.inventory.append(data.iloc[t].loc['close'])
+            agent.inventory.append(close)
 
         # SELL
         elif (
             action == 2 and len(agent.inventory) > 0 and
-            agent.inventory[0] < data.iloc[t].loc['close']
+            agent.inventory[0] < close
         ):
             reward = 0
             for item in agent.inventory:
-              delta = data.iloc[t].loc['close'] - item
+              delta = close - item
               reward += delta  # max(delta, 0)
             total_profit += reward
             agent.inventory = []
@@ -80,36 +80,39 @@ def evaluate_model(agent, data, window_size, debug):
 
         # select an action
         action = agent.act(state, is_eval=True)
+        close = data.iloc[t].loc['close']
 
         # BUY
         if action == 1 and len(agent.inventory) == 0:
-            agent.inventory.append(data.iloc[t].loc['close'])
+            agent.inventory.append(close)
 
-            history.append((data.iloc[t].loc['close'], "BUY"))
+            history.append((close, "BUY"))
             if debug:
                 logging.debug("Buy at: {}".format(
-                    format_currency(data.iloc[t].loc['close'])))
+                    format_currency(close)))
 
         # SELL
         elif (
             action == 2 and len(agent.inventory) > 0
-            and agent.inventory[0] < data.iloc[t].loc['close']
+            and agent.inventory[0] < close
         ):
             reward = 0
             for item in agent.inventory:
-                delta = data.iloc[t].loc['close'] - item
+                delta = close - item
                 if debug:
                     logging.debug("Sell at: {} | Position: {}".format(
-                        format_currency(data.iloc[t].loc['close']),
-                        format_position(data.iloc[t].loc['close'] - item)))
+                        format_currency(close),
+                        format_position(close - item)))
                 reward += delta  # max(delta, 0)
             total_profit += reward
             agent.inventory = []
 
-            history.append((data.iloc[t].loc['close'], "SELL"))
+            history.append((close, "SELL"))
+            with open('eval_log.csv', 'a+') as f:
+                f.write(f'{close},BUY\n')
         # HOLD
         else:
-            history.append((data.iloc[t].loc['close'], "HOLD"))
+            history.append((close, "HOLD"))
 
         done = (t == data_length - 1)
         agent.memory.append((state, action, reward, next_state, done))
