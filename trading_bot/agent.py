@@ -17,8 +17,9 @@ from trading_bot.models import get_models_folder_path
 def huber_loss(y_true, y_pred, clip_delta=1.0):
     """Huber loss - Custom Loss Function for Q Learning
 
-    Links: 	https://en.wikipedia.org/wiki/Huber_loss
-            https://jaromiru.com/2017/05/27/on-using-huber-loss-in-deep-q-learning/
+    Links:
+        https://en.wikipedia.org/wiki/Huber_loss
+        https://jaromiru.com/2017/05/27/on-using-huber-loss-in-deep-q-learning/
     """
     error = y_true - y_pred
     cond = K.abs(error) <= clip_delta
@@ -72,8 +73,7 @@ class Agent:
             self.target_model.set_weights(self.model.get_weights())
 
     def _model(self):
-        """Creates the model
-        """
+        """Creates the model."""
         model = Sequential()
         model.add(Dense(units=128, activation="relu",
                         input_dim=self.state_size))
@@ -86,13 +86,11 @@ class Agent:
         return model
 
     def remember(self, state, action, reward, next_state, done):
-        """Adds relevant data to memory
-        """
+        """Adds relevant data to memory."""
         self.memory.append((state, action, reward, next_state, done))
 
     def act(self, state, is_eval=False):
-        """Take action from given possible set of actions
-        """
+        """Take action from given possible set of actions."""
         # Take random action in order to diversify experience at the beginning
         if not is_eval and random.random() <= self.epsilon:
             return random.randrange(self.action_size)
@@ -105,8 +103,7 @@ class Agent:
         return np.argmax(action_probs[0])
 
     def train_experience_replay(self, batch_size):
-        """Train on previous experiences in memory
-        """
+        """Train on previous experiences in memory."""
         mini_batch = random.sample(self.memory, batch_size)
         X_train, y_train = [], []
 
