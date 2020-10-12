@@ -64,15 +64,12 @@ def main(train_stock, val_stock, window_size, batch_size, ep_count,
     agent = Agent(window_size * train_data.shape[1], strategy=strategy,
                   pretrained=pretrained, model_name=model_name)
 
-
-    initial_offset = val_close[1] - val_close[0]
-
     for episode in range(1, ep_count + 1):
         train_result = train_model(agent, episode, train_data,
                                    ep_count=ep_count, batch_size=batch_size,
                                    window_size=window_size)
         val_result, _ = evaluate_model(agent, val_data, window_size, debug)
-        show_train_result(train_result, val_result, initial_offset)
+        show_train_result(train_result, val_result)
 
 
 if __name__ == "__main__":
