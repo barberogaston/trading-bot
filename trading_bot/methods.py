@@ -43,8 +43,8 @@ def train_model(agent, episode, data, ep_count=100, batch_size=32,
         ):
             reward = 0
             for item in agent.inventory:
-              delta = close - item
-              reward += delta  # max(delta, 0)
+                delta = close - item
+                reward += delta  # max(delta, 0)
             total_profit += reward
             agent.inventory = []
 
