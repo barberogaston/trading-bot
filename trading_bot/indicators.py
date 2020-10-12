@@ -1,8 +1,23 @@
+import pandas as pd
 from ta.momentum import RSIIndicator
 from ta.trend import EMAIndicator, MACD, SMAIndicator
 
 
-def add_indicators(data):
+def add_indicators(data: pd.DataFrame) -> pd.DataFrame:
+    """Adds the indicators consumed by the bot.
+
+    Parameters
+    ----------
+    data : pd.DataFrame
+        A dataframe with daily stock values. Must include: open, high,
+        low, close and volume. It should also be sorted in a descending
+        manner.
+
+    Returns
+    -------
+    pd.DataFrame
+        The input dataframe with the indicators added.
+    """
     rsi = RSIIndicator(data['close'])
     ema = EMAIndicator(data['close'])
     sma = SMAIndicator(data['close'], n=14)
