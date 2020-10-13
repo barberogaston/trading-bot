@@ -100,7 +100,8 @@ class Agent:
             return 1  # Make a definite buy on the first iter
 
         action_probs = self.model.predict(state)
-        action_probs[0][2] = action_probs[0][2] * 0.98  # Penalize SELL
+        if is_eval:
+            action_probs[0][2] = action_probs[0][2] * 0.98  # Penalize SELL
         return np.argmax(action_probs[0])
 
     def train_experience_replay(self, batch_size):
