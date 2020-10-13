@@ -46,6 +46,7 @@ def run_image():
     run = ['docker', 'run',
            '-p', '8000:8000',
            '-v', f'{os.getcwd()}/trading_bot/app/data:/data',
+           '--name', 'trading-bot',
            'trading-bot']
     subprocess.run(run)
 
