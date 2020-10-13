@@ -10,8 +10,8 @@ from trading_bot.utils import filter_data_by_feature_columns
 
 
 app = FastAPI()
-model = load_model('model.keras', {"huber_loss": huber_loss})
-bitcoin = pd.read_csv('bitcoin.csv')
+model = load_model('./data/model', {"huber_loss": huber_loss})
+bitcoin = pd.read_csv('./data/bitcoin.csv')
 
 
 @app.get('/ping')
@@ -22,7 +22,15 @@ def ping():
 @app.get('/action')
 def action():
     actions = ['HOLD', 'BUY', 'SELL']
+    action_date = bitcoin.iloc[-1].loc['date']
+    close_price = bitcoin.iloc[-1].loc['close']
     data = filter_data_by_feature_columns(add_indicators(bitcoin))
     state = get_state(data, data.shape[0] - 1, 16)
     action_probs = model.predict(state)
-    return actions[np.argmax(action_probs[0])]
+    action = actions[np.argmax(action_probs[0])]
+    response = {
+        'action': action,
+        'date': action_date,
+        'close': close_price
+    }
+    return response

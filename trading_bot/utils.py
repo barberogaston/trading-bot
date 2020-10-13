@@ -48,6 +48,7 @@ def switch_k_backend_device():
 
 
 def filter_data_by_feature_columns(data):
+    data = data.copy()
     feature_columns = ['close', 'rsi', 'ema', 'sma', 'macd', 'macd_signal',
                        'macd_diff', 'volume', 'chaikin', 'mfi', 'obv']
     return data.loc[:, feature_columns]
