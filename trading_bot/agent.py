@@ -41,7 +41,7 @@ class Agent:
         self.action_size = 3           		# [sit, buy, sell]
         self.model_name = model_name
         self.models_path = get_models_folder_path()
-        self.inventory = []
+        self.last_buy = 0
         self.memory = deque(maxlen=10000)
         self.first_iter = True
 
