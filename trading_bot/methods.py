@@ -4,13 +4,8 @@ import numpy as np
 
 from tqdm import tqdm
 
-from trading_bot.utils import (
-    format_currency,
-    format_position
-)
-from trading_bot.ops import (
-    get_state
-)
+from trading_bot.utils import format_currency, format_position
+from trading_bot.ops import get_state
 
 
 def train_model(agent, episode, data, ep_count=100, batch_size=32,
@@ -18,7 +13,7 @@ def train_model(agent, episode, data, ep_count=100, batch_size=32,
     total_profit = 0
     data_length = data.shape[0] - 1
 
-    agent.inventory = []
+    agent.last_buy = 0
     avg_loss = []
 
     state = get_state(data, 0, window_size + 1)
@@ -33,20 +28,14 @@ def train_model(agent, episode, data, ep_count=100, batch_size=32,
         close = data.iloc[t].loc['close']
 
         # BUY
-        if action == 1 and len(agent.inventory) == 0:
-            agent.inventory.append(close)
+        if action == 1 and agent.last_buy == 0:
+            agent.last_buy = close
 
         # SELL
-        elif (
-            action == 2 and len(agent.inventory) > 0 and
-            agent.inventory[0] < close
-        ):
-            reward = 0
-            for item in agent.inventory:
-                delta = close - item
-                reward += delta  # max(delta, 0)
+        elif action == 2 and agent.last_buy > 0 and agent.last_buy < close:
+            reward = close - agent.last_buy
             total_profit += reward
-            agent.inventory = []
+            agent.last_buy = 0
 
         # HOLD
         else:
@@ -71,7 +60,7 @@ def evaluate_model(agent, data, window_size, debug):
     data_length = data.shape[0] - 1
 
     history = []
-    agent.inventory = []
+    agent.last_buy = 0
 
     state = get_state(data, 0, window_size + 1)
 
@@ -84,33 +73,25 @@ def evaluate_model(agent, data, window_size, debug):
         close = data.iloc[t].loc['close']
 
         # BUY
-        if action == 1 and len(agent.inventory) == 0:
-            agent.inventory.append(close)
-
+        if action == 1 and agent.last_buy == 0:
+            agent.last_buy = close
             history.append((close, "BUY"))
             if debug:
                 logging.debug("Buy at: {}".format(
                     format_currency(close)))
 
         # SELL
-        elif (
-            action == 2 and len(agent.inventory) > 0
-            and agent.inventory[0] < close
-        ):
-            reward = 0
-            for item in agent.inventory:
-                delta = close - item
-                if debug:
-                    logging.debug("Sell at: {} | Position: {}".format(
-                        format_currency(close),
-                        format_position(close - item)))
-                reward += delta  # max(delta, 0)
+        elif action == 2 and agent.last_buy > 0 and agent.last_buy < close:
+            reward = close - agent.last_buy
+            if debug:
+                logging.debug("Sell at: {} | Position: {}".format(
+                    format_currency(close),
+                    format_position(reward)))
             total_profit += reward
-            agent.inventory = []
+            agent.last_buy = 0
 
             history.append((close, "SELL"))
-            with open('eval_log.csv', 'a+') as f:
-                f.write(f'{close},BUY\n')
+
         # HOLD
         else:
             history.append((close, "HOLD"))
