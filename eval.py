@@ -46,11 +46,6 @@ def main(eval_stock, window_size, model_name, debug):
         first_buy = history[0][0]
         show_eval_result(model_name, profit, first_buy)
 
-        with open('eval_log.csv', 'w+') as f:
-            f.write('Close,Action\n')
-            for row in history:
-                f.write(f'{row[0]},{row[1]}\n')
-
     # Multiple Model Evaluation
     else:
         for model in os.listdir("models"):
