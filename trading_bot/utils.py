@@ -27,9 +27,11 @@ def show_train_result(result, val_position):
         f.write(f'{result[0]},{result[2]}, {val_position},{result[3]}\n')
 
 
-def show_eval_result(model_name, profit):
+def show_eval_result(model_name, profit, first_buy):
     """ Displays eval results."""
-    logging.info('{}: {}\n'.format(model_name, format_position(profit)))
+    total_profit = format_position(profit)
+    roi = round(profit / first_buy * 100, 2)
+    logging.info(f'{model_name}: {total_profit} ({roi}%)\n')
 
 
 def get_stock_data(stock_file):
