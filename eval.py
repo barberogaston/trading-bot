@@ -43,7 +43,8 @@ def main(eval_stock, window_size, model_name, debug):
         agent = Agent(window_size * data.shape[1], pretrained=True,
                       model_name=model_name)
         profit, history = evaluate_model(agent, data, window_size, debug)
-        show_eval_result(model_name, profit)
+        first_buy = history[0][0]
+        show_eval_result(model_name, profit, first_buy)
 
         with open('eval_log.csv', 'w+') as f:
             f.write('Close,Action\n')
