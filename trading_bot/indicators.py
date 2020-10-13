@@ -20,6 +20,7 @@ def add_indicators(data: pd.DataFrame) -> pd.DataFrame:
     pd.DataFrame
         The input dataframe with the indicators added.
     """
+    data = data.copy()
     rsi = RSIIndicator(data['close'])
     ema = EMAIndicator(data['close'])
     sma = SMAIndicator(data['close'], n=14)

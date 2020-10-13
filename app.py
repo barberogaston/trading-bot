@@ -12,30 +12,42 @@ here = os.path.abspath(os.path.dirname(__file__))
 
 
 def move_model(model_name):
-    cwd = os.getcwd()
+    """Move the specified model to the trading_bot/app/data folder
+    which is the docker container's volume."""
     models_path = get_models_folder_path()
-    shutil.copy(f'{models_path}/{model_name}', cwd)
-    shutil.move(f'{cwd}/{model_name}', f'{cwd}/model.keras')
+    app_data_path = 'trading_bot/app/data'
+    shutil.copy(f'{models_path}/{model_name}', app_data_path)
+    shutil.move(f'{app_data_path}/{model_name}',
+                f'{app_data_path}/model')
 
 
 def download_historical_data():
+    """Runs the download.py script in trading_bot/data."""
     download = ['python', 'trading_bot/data/download.py']
     subprocess.run(download)
 
 
 def move_historical_data():
-    cwd = os.getcwd()
+    """Move the bitcoin.csv file to trading_bot/app/data folder which
+    is the docker container's volume."""
     data_path = get_data_folder_path()
-    shutil.move(f'{data_path}/bitcoin.csv', cwd)
+    app_data_path = 'trading_bot/app/data'
+    shutil.copy(f'{data_path}/bitcoin.csv', app_data_path)
+    os.remove(f'{data_path}/bitcoin.csv')
 
 
 def build_image():
+    """Build the docker image."""
     build = ['docker', 'build', '-t', 'trading-bot', '.']
     subprocess.run(build)
 
 
 def run_image():
-    run = ['docker', 'run', '-p', '8000:8000', 'trading-bot']
+    """Run the docker image."""
+    run = ['docker', 'run',
+           '-p', '8000:8000',
+           '-v', f'{os.getcwd()}/trading_bot/app/data:/data',
+           'trading-bot']
     subprocess.run(run)
 
 
