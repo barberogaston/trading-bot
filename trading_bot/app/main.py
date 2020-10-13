@@ -26,11 +26,13 @@ def action():
     close_price = bitcoin.iloc[-1].loc['close']
     data = filter_data_by_feature_columns(add_indicators(bitcoin))
     state = get_state(data, data.shape[0] - 1, 16)
-    action_probs = model.predict(state)
-    action = actions[np.argmax(action_probs[0])]
+    action_probs = model.predict(state)[0]
+    action_probs[2] = action_probs[2] * 0.98
+    action = actions[np.argmax(action_probs)]
     response = {
         'action': action,
         'date': action_date,
-        'close': close_price
+        'close': close_price,
+        'probs': dict(zip(actions, action_probs))
     }
     return response

@@ -33,7 +33,6 @@ def move_historical_data():
     data_path = get_data_folder_path()
     app_data_path = 'trading_bot/app/data'
     shutil.copy(f'{data_path}/bitcoin.csv', app_data_path)
-    os.remove(f'{data_path}/bitcoin.csv')
 
 
 def build_image():
