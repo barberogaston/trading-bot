@@ -41,6 +41,13 @@ def build_image():
     subprocess.run(build)
 
 
+def remove_container():
+    stop = ['docker', 'container', 'stop', 'trading-bot']
+    subprocess.run(stop)
+    remove = ['docker', 'container', 'rm', 'trading-bot']
+    subprocess.run(remove)
+
+
 def run_image():
     """Run the docker image."""
     run = ['docker', 'run',
@@ -62,6 +69,7 @@ def run_app(model_name, rebuild):
     move_historical_data()
     if rebuild:
         build_image()
+    remove_container()
     run_image()
 
 
