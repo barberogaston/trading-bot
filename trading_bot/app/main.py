@@ -27,7 +27,6 @@ def action():
     data = filter_data_by_feature_columns(add_indicators(bitcoin))
     state = get_state(data, data.shape[0] - 1, 16)
     action_probs = [float(prob) for prob in model.predict(state)[0]]
-    action_probs[2] = action_probs[2] * 0.98
     action = actions[np.argmax(action_probs)]
     response = {
         'action': action,
