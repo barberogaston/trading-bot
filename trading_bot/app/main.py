@@ -10,8 +10,8 @@ from trading_bot.utils import filter_data_by_feature_columns
 
 
 app = FastAPI()
-model = load_model('./data/model', {"huber_loss": huber_loss})
-bitcoin = pd.read_csv('./data/bitcoin.csv')
+model = load_model('/data/model', {"huber_loss": huber_loss})
+bitcoin = pd.read_csv('/data/bitcoin.csv')
 
 
 @app.get('/ping')
