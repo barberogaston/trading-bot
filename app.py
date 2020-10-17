@@ -46,6 +46,9 @@ def remove_container():
     subprocess.run(stop_container)
     remove_container = ['docker', 'container', 'rm', 'trading-bot']
     subprocess.run(remove_container)
+
+
+def remove_volume():
     remove_volume = ['docker', 'volume', 'rm', 'trading_bot']
     subprocess.run(remove_volume)
 
@@ -72,6 +75,7 @@ def run_app(model_name, rebuild):
     if rebuild:
         build_image()
     remove_container()
+    remove_volume()
     run_image()
 
 
