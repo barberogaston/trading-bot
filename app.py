@@ -15,7 +15,7 @@ def move_model(model_name):
     """Move the specified model to the trading_bot/app/data folder
     which is the docker container's volume."""
     models_path = get_models_folder_path()
-    app_data_path = 'trading_bot/app/data'
+    app_data_path = f'{here}/trading_bot/app/data'
     shutil.copy(f'{models_path}/{model_name}', app_data_path)
     shutil.move(f'{app_data_path}/{model_name}',
                 f'{app_data_path}/model')
@@ -23,7 +23,7 @@ def move_model(model_name):
 
 def download_historical_data():
     """Runs the download.py script in trading_bot/data."""
-    download = ['python', 'trading_bot/data/download.py']
+    download = ['python', f'{here}/trading_bot/data/download.py']
     subprocess.run(download)
 
 
@@ -31,7 +31,7 @@ def move_historical_data():
     """Move the bitcoin.csv file to trading_bot/app/data folder which
     is the docker container's volume."""
     data_path = get_data_folder_path()
-    app_data_path = 'trading_bot/app/data'
+    app_data_path = f'{here}/trading_bot/app/data'
     shutil.copy(f'{data_path}/bitcoin.csv', app_data_path)
 
 
@@ -42,17 +42,19 @@ def build_image():
 
 
 def remove_container():
-    stop = ['docker', 'container', 'stop', 'trading-bot']
-    subprocess.run(stop)
-    remove = ['docker', 'container', 'rm', 'trading-bot']
-    subprocess.run(remove)
+    stop_container = ['docker', 'container', 'stop', 'trading-bot']
+    subprocess.run(stop_container)
+    remove_container = ['docker', 'container', 'rm', 'trading-bot']
+    subprocess.run(remove_container)
+    remove_volume = ['docker', 'volume', 'rm', 'trading_bot']
+    subprocess.run(remove_volume)
 
 
 def run_image():
     """Run the docker image."""
     run = ['docker', 'run',
            '-p', '8000:8000',
-           '-v', f'{os.getcwd()}/trading_bot/app/data:/data',
+           '-v', f'{here}/trading_bot/app/data:/data',
            '--name', 'trading-bot',
            'trading-bot']
     subprocess.run(run)
