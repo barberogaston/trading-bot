@@ -79,13 +79,15 @@ python app.py --model-name=model --rebuild
 
 ### GET action
 
-**URL:** `http://localhost:8000/action` <br>
-**Method:** `GET` <br>
+**URL:** `http://localhost:8000/action`
+
+**Method:** `GET`
+
 **Response**
 
 ```json
 {
-    "action": "SELL", // BUY, SELL or HOLD
+    "action": "SELL",
     "close": 11358.10156733,
     "date": "2020-10-17",
     "probs": {
