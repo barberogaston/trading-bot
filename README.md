@@ -21,50 +21,86 @@ There have been several improvements to the Q-learning algorithm over the years,
 - [ ] Prioritized Experience Replay
 - [ ] Dueling Network Architectures
 
-## Results
-
-Trained on `GOOG` 2010-17 stock data, tested on 2019 with a profit of $1141.45 (validated on 2018 with profit of $863.41):
-
-![Google Stock Trading episode](./extra/visualization.png)
-
-You can obtain similar visualizations of your model evaluations using the [notebook](./visualize.ipynb) provided.
-
 ## Some Caveats
 
-- At any given state, the agent can only decide to buy/sell one stock at a time. This is done to keep things as simple as possible as the problem of deciding how much stock to buy/sell is one of portfolio redistribution.
+- At any given state, the agent can only decide to buy/sell if and only if it has performed the opposite operation before, being this only true after the first buy. In other words, the agent can't sell if it hasn't bought anything and the same way around.
 - The n-day window feature representation is a vector of subsequent differences in Adjusted Closing price of the stock we're trading followed by a sigmoid operation, done in order to normalize the values to the range [0, 1].
 - Training is prefferably done on CPU due to it's sequential manner, after each episode of trading we replay the experience (1 epoch over a small minibatch) and update model parameters.
 
 ## Data
 
-You can download Historical Financial data from [Yahoo! Finance](https://ca.finance.yahoo.com/) for training, or even use some sample datasets already present under `data/`.
+Download bitcoin's historical data with the following command.
+
+```bash
+python trading_bot/data/download.py
+```
+
+This will download data from bitcoin's start up to yesterday, meaning new data will be available after 00:00 UTC.
 
 ## Getting Started
+
+### Install dependencies
 
 In order to use this project, you'll need to install the required python packages:
 
 ```bash
-pip3 install -r requirements.txt
+pip install -e .
 ```
+
+### Training and validating
 
 Now you can open up a terminal and start training the agent:
 
 ```bash
-python3 train.py data/GOOG.csv data/GOOG_2018.csv --strategy t-dqn
+cd trading_bot
+python train.py data/train.csv data/valid.csv --strategy t-dqn --window-size=10
 ```
+
+### Testing with unseen data
 
 Once you're done training, run the evaluation script and let the agent make trading decisions:
 
 ```bash
-python3 eval.py data/GOOG_2019.csv --model-name model_GOOG_50 --debug
+python eval.py data/test.csv --model-name model --debug
 ```
 
-Now you are all set up!
+### Serving predictions
+
+Once you have trained, validated and tested your model, you can obtain predictions each day at 00:05 UTC (leave a 5 minute margin for the API to load yesterday's data).
+
+The following execution creates a Docker container and starts a local API to which you can request which action to take based on yesterda's state.
+
+```bash
+python app.py --model-name=model
+
+# In case you want ot rebuild the container add the --rebuild flag
+python app.py --model-name=model --rebuild
+```
+
+### GET action
+
+**URL:** `http://localhost:8000/action` <br>
+**Method:** `GET` <br>
+**Response**
+
+```json
+{
+    "action": "SELL", // BUY, SELL or HOLD
+    "close": 11358.10156733,
+    "date": "2020-10-17",
+    "probs": {
+        "BUY": 0.405701607465744,
+        "HOLD": 0.3922637701034546,
+        "SELL": 0.4192860424518585
+    }
+}
+```
 
 ## Acknowledgements
 
 - [@keon](https://github.com/keon) for [deep-q-learning](https://github.com/keon/deep-q-learning)
 - [@edwardhdlu](https://github.com/edwardhdlu) for [q-trader](https://github.com/edwardhdlu/q-trader)
+- [Prabhsimran Singh](https://github.com/pskrunner14) for providing the [original repo](https://github.com/pskrunner14/trading-bot)
 
 ## References
 
