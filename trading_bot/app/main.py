@@ -3,6 +3,7 @@ import pandas as pd
 from fastapi import FastAPI
 from keras.models import load_model
 
+from trading_bot.app.utils import get_action
 from trading_bot.agent import huber_loss
 from trading_bot.indicators import add_indicators
 from trading_bot.ops import get_state
@@ -26,12 +27,14 @@ def action():
     close_price = bitcoin.iloc[-1].loc['close']
     data = filter_data_by_feature_columns(add_indicators(bitcoin))
     state = get_state(data, data.shape[0] - 1, 16)
-    action_probs = [float(prob) for prob in model.predict(state)[0]]
-    action = actions[np.argmax(action_probs)]
+    action_probs = (
+        dict(zip(actions, [float(prob) for prob in model.predict(state)[0]])))
+    action = get_action(action_probs)
+    action_probs['ADJUSTED_SELL'] = action_probs['SELL'] * 0.98
     response = {
         'action': action,
         'date': action_date,
         'close': close_price,
-        'probs': dict(zip(actions, action_probs))
+        'probs': action_probs
     }
     return response
