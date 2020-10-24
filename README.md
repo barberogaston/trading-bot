@@ -73,7 +73,7 @@ The following execution creates a Docker container and starts a local API to whi
 ```bash
 python app.py --model-name=model
 
-# In case you want ot rebuild the container add the --rebuild flag
+# In case you want to rebuild the container add the --rebuild flag
 python app.py --model-name=model --rebuild
 ```
 
@@ -91,6 +91,7 @@ python app.py --model-name=model --rebuild
     "close": 11358.10156733,
     "date": "2020-10-17",
     "probs": {
+        "ADJUSTED_SELL": 0.41090032160282136,
         "BUY": 0.405701607465744,
         "HOLD": 0.3922637701034546,
         "SELL": 0.4192860424518585
