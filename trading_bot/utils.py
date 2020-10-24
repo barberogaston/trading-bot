@@ -51,6 +51,13 @@ def switch_k_backend_device():
 
 def filter_data_by_feature_columns(data):
     data = data.copy()
-    feature_columns = ['close', 'rsi', 'ema', 'sma', 'macd', 'macd_signal',
-                       'macd_diff', 'volume', 'chaikin', 'mfi', 'obv']
+    feature_columns = ['open', 'high', 'low', 'close', 'volume', 'rsi',
+                       'stoch_osc', 'stoch_osc_signal', 'adx', 'adx_pos',
+                       'adx_neg', 'ema', 'ema_200', 'ichimoku_a', 'ichimoku_b',
+                       'ichimoku_base_line', 'ichimoku_conversion_line',
+                       'macd', 'macd_diff', 'macd_signal', 'sma', 'sma_200',
+                       'bollinger_hband', 'bollinger_hband_indicator',
+                       'bollinger_lband', 'bollinger_lband_indicator',
+                       'bollinger_mavg', 'bollinger_pband', 'bollinger_wband',
+                       'chaikin', 'mfi', 'obv']
     return data.loc[:, feature_columns]
