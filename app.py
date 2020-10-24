@@ -11,14 +11,18 @@ from trading_bot.models import get_models_folder_path
 here = os.path.abspath(os.path.dirname(__file__))
 
 
+def clean_app_data():
+    """Clean the trading_bot/app/data directory."""
+    shutil.rmtree(f'{here}/trading_bot/app/data/')
+    os.mkdir(f'{here}/trading_bot/app/data/')
+
+
 def move_model(model_name):
     """Move the specified model to the trading_bot/app/data folder
     which is the docker container's volume."""
     models_path = get_models_folder_path()
     app_data_path = f'{here}/trading_bot/app/data'
-    shutil.copy(f'{models_path}/{model_name}', app_data_path)
-    shutil.move(f'{app_data_path}/{model_name}',
-                f'{app_data_path}/model')
+    shutil.copytree(f'{models_path}/{model_name}', f'{app_data_path}/model')
 
 
 def download_historical_data():
@@ -42,6 +46,7 @@ def build_image():
 
 
 def remove_container():
+    """Remove the container to avoid errors when rebuilding."""
     stop_container = ['docker', 'container', 'stop', 'trading-bot']
     subprocess.run(stop_container)
     remove_container = ['docker', 'container', 'rm', 'trading-bot']
@@ -49,6 +54,7 @@ def remove_container():
 
 
 def remove_volume():
+    """Remove the volume to avoid errors when running."""
     remove_volume = ['docker', 'volume', 'rm', 'trading_bot']
     subprocess.run(remove_volume)
 
@@ -69,6 +75,7 @@ def run_image():
 @click.option('--rebuild', is_flag=True, default=False,
               help='Add this if you wish to rebuild the container')
 def run_app(model_name, rebuild):
+    clean_app_data()
     move_model(model_name)
     download_historical_data()
     move_historical_data()
