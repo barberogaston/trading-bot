@@ -91,7 +91,6 @@ python app.py --model-name=model --rebuild
     "close": 11358.10156733,
     "date": "2020-10-17",
     "probs": {
-        "ADJUSTED_SELL": 0.41090032160282136,
         "BUY": 0.405701607465744,
         "HOLD": 0.3922637701034546,
         "SELL": 0.4192860424518585

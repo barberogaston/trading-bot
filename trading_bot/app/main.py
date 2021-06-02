@@ -1,4 +1,3 @@
-import numpy as np
 import pandas as pd
 from fastapi import FastAPI
 from keras.models import load_model
@@ -29,7 +28,6 @@ def action():
     state = get_state(data, data.shape[0] - 1, 16)
     action_probs = dict(zip(actions, model.predict(state)[0]))
     action = get_action(action_probs)
-    action_probs['ADJUSTED_SELL'] = action_probs['SELL'] * 0.98
     response = {
         'action': action,
         'date': action_date,
